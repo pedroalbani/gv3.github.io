@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A/T POWER – Guia Interativo da Transmissão GV3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="min-h-screen flex justify-center p-6">
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center space-y-6">
+
+      <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 text-center">
+        ⚡ A/T POWER – Guia Interativo da Transmissão GV3
+      </h1>
+
+      <!-- A/T POWER como toggle -->
+      <div class="flex items-center space-x-4">
+        <span class="text-sm font-medium">A/T POWER</span>
+        <label class="inline-flex relative items-center cursor-pointer">
+          <input type="checkbox" id="atpower-toggle" class="sr-only peer" onchange="togglePower()">
+          <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-600"></div>
+          <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-full"></div>
+        </label>
+      </div>
+
+      <!-- Seletor de Marchas -->
+      <div class="flex flex-wrap justify-center gap-2">
+        <button onclick="setMarcha('D')" class="px-4 py-2 bg-blue-600 text-white rounded-lg">D</button>
+        <button onclick="setMarcha('3')" class="px-4 py-2 bg-blue-600 text-white rounded-lg">3</button>
+        <button onclick="setMarcha('2')" class="px-4 py-2 bg-blue-600 text-white rounded-lg">2</button>
+        <button onclick="setMarcha('L')" class="px-4 py-2 bg-blue-600 text-white rounded-lg">L</button>
+      </div>
+
+      <!-- Cenários -->
+      <div id="cenarios" class="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-sm">
+        <div id="cenario-subida" class="tooltip hidden p-2 rounded-lg border bg-yellow-100 text-yellow-800" title="Para maior força em rampas e subidas íngremes, com rotação mais alta.">⛰️ Subida íngreme</div>
+        <div id="cenario-descida" class="tooltip hidden p-2 rounded-lg border bg-blue-100 text-blue-800" title="Para usar o freio motor e evitar superaquecimento dos freios em descidas longas.">🛞 Descida longa</div>
+        <div id="cenario-piso" class="tooltip hidden p-2 rounded-lg border bg-purple-100 text-purple-800" title="Para pisos escorregadios ou com baixa tração, mantendo a 2ª marcha.">🌧️ Piso escorregadio</div>
+        <div id="cenario-normal" class="tooltip hidden p-2 rounded-lg border bg-green-100 text-green-800" title="Para o dia a dia urbano e rodoviário sem exigências específicas.">🛣️ Condução normal</div>
+      </div>
+      <div id="descricao-cenario" class="w-full mt-3 text-sm text-gray-700"></div>
+
+      <!-- Botão "Qual cenário estou enfrentando" -->
+      <div class="mt-4">
+        <button onclick="mostrarSugestoes()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm">❓ Qual cenário estou enfrentando?</button>
+      </div>
+      <div id="sugestoes" class="hidden mt-4 w-full">
+        <p class="text-sm text-gray-700">Selecione o cenário abaixo para ver a recomendação:</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+          <button onclick="sugerir('subida')" class="bg-yellow-100 text-yellow-800 rounded-lg p-2">⛰️ Subida</button>
+          <button onclick="sugerir('descida')" class="bg-blue-100 text-blue-800 rounded-lg p-2">🛞 Descida</button>
+          <button onclick="sugerir('chuva')" class="bg-purple-100 text-purple-800 rounded-lg p-2">🌧️ Chuva / Escorregadio</button>
+          <button onclick="sugerir('urbano')" class="bg-green-100 text-green-800 rounded-lg p-2">🛣️ Urbano</button>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div id="resultado" class="text-sm space-y-4 w-full mt-4 min-h-[180px] transition-all duration-200"></div>
+
+      <!-- Atenção Geral -->
+      <div class="w-full space-y-3">
+        <h2 class="text-xl font-semibold text-red-600">⚠️ Atenção Geral</h2>
+        <ul class="list-disc list-inside text-sm space-y-1">
+          <li>Reduza a velocidade e engate uma marcha inferior antes de descer uma ladeira longa ou subir uma subida inclinada.</li>
+          <li>Em pisos escorregadios, reduza a velocidade antes de reduzir a marcha.</li>
+          <li>Nunca engate a ré sem que o carro esteja totalmente parado.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dicas = {
+      D: {
+        off: ["Modo de 4 marchas – uso geral.", "O câmbio realiza trocas automáticas entre todas as marchas (1ª a 4ª).", "Em 4L LOCK, a transmissão limita o uso até a 3ª marcha."],
+        on: ["Modo de 4 marchas com trocas mais tardias – mais força em subidas e arrancadas.", "O câmbio continua trocando entre as 4 marchas, mas em rotações mais altas.", "Em 4L LOCK, a transmissão continua limitada até a 3ª marcha."]
+      },
+      "3": {
+        off: ["Modo de 3 marchas – recomendado para subidas e descidas.", "Troca entre 1ª, 2ª e 3ª automaticamente.", "Auxilia no uso do freio motor."],
+        on: ["Trocas entre 1ª, 2ª e 3ª com rotações mais altas.", "Mais potência para terrenos exigentes.", "Útil para subidas com carga ou off-road leve."]
+      },
+      "2": {
+        off: ["Trava na 2ª marcha.", "Ideal para controle em descidas e baixa velocidade.", "Evita trocas para 1ª ou 3ª."],
+        on: ["Modo piso escorregadio: segura a 2ª marcha.", "Evita patinagem em lama ou neve.", "Mesmo ao trocar para D ou 3, mantém 2ª até acelerar mais."]
+      },
+      L: {
+        off: ["Trava na 1ª marcha.", "Uso extremo off-road e descidas íngremes.", "Máximo freio motor."],
+        on: ["Mantém 1ª com mais torque.", "Ideal para subidas íngremes com tração.", "Controle total do veículo em baixa."]
+      }
+    };
+
+    let marchaAtual = "D";
+
+    function setMarcha(m) {
+      marchaAtual = m;
+      atualizar();
+    }
+
+    function atualizar() {
+      const isChecked = document.getElementById("atpower-toggle").checked;
+      const power = isChecked ? "on" : "off";
+      const lista = dicas[marchaAtual][power];
+      const html = `<h2 class="text-xl font-semibold text-blue-700">🔧 Marcha ${marchaAtual} (${power === 'on' ? 'A/T POWER Ligado' : 'Desligado'})</h2><ul class="list-disc list-inside space-y-1">${lista.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      document.getElementById("resultado").innerHTML = html;
+      atualizarCenarios(marchaAtual, power);
+    }
+
+    function atualizarCenarios(marcha, power) {
+      const mostrar = id => document.getElementById(id).classList.remove('hidden');
+      const ocultar = id => document.getElementById(id).classList.add('hidden');
+      const todos = ['cenario-subida', 'cenario-descida', 'cenario-piso', 'cenario-normal'];
+      todos.forEach(ocultar);
+
+      let descricoes = [];
+
+      if (marcha === 'D' && power === 'off') {
+        mostrar('cenario-normal');
+        descricoes.push('Modo ideal para uso urbano e rodoviário sem necessidade de força extra.');
+      }
+      if (["D", "3", "L"].includes(marcha) && power === 'on') {
+        mostrar('cenario-subida');
+        descricoes.push('Usado em subidas íngremes para manter força e evitar troca precoce de marcha.');
+      }
+      if (["3", "2", "L"].includes(marcha)) {
+        mostrar('cenario-descida');
+        descricoes.push('Essas marchas ajudam a usar o freio motor, evitando desgaste nos freios.');
+      }
+      if (marcha === '2' && power === 'on') {
+        mostrar('cenario-piso');
+        descricoes.push('Ideal para terrenos escorregadios, mantendo a tração com a 2ª marcha travada.');
+      }
+
+      document.getElementById("descricao-cenario").innerText = descricoes.join("\n\n");
+    }
+
+    function togglePower() {
+      atualizar();
+    }
+
+    function mostrarSugestoes() {
+      document.getElementById("sugestoes").classList.toggle("hidden");
+    }
+
+    function sugerir(cenario) {
+      const toggle = document.getElementById("atpower-toggle");
+      if (cenario === "subida") {
+        setMarcha("3"); toggle.checked = true;
+      } else if (cenario === "descida") {
+        setMarcha("2"); toggle.checked = false;
+      } else if (cenario === "chuva") {
+        setMarcha("2"); toggle.checked = true;
+      } else if (cenario === "urbano") {
+        setMarcha("D"); toggle.checked = false;
+      }
+      atualizar();
+      document.getElementById("sugestoes").classList.add("hidden");
+    }
+
+    window.onload = atualizar;
+  </script>
+</body>
+</html>
