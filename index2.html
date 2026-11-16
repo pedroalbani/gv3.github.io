@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A/T POWER – Guia Interativo da Transmissão GV3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NZR85VB2');</script>
+  <!-- End Google Tag Manager -->
+  <style>
+    body {
+      background-image: url('https://i.pinimg.com/736x/b6/46/f4/b646f4fc5c114c5c980dfe832c655300.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+  </style>
+</head>
+<body class="bg-gray-100/0 min-h-screen flex flex-col items-center py-8 relative">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZR85VB2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="w-full max-w-4xl bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl">
+
+  <div class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-xl">
+    <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 text-center">⚡ A/T POWER – Guia Interativo da Transmissão GV3</h1>
+
+    <!-- Linha de controles -->
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Marchas -->
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <button id="btn-D"  class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200">D</button>
+        <button id="btn-3"  class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200">3</button>
+        <button id="btn-2"  class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200">2</button>
+        <button id="btn-L"  class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200">L</button>
+      </div>
+
+      <!-- A/T POWER toggle compacto -->
+      <div class="flex items-center justify-center gap-3">
+        <span class="text-sm font-medium">A/T POWER</span>
+        <label class="inline-flex relative items-center cursor-pointer select-none">
+          <input type="checkbox" id="atpower-toggle" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+          <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </label>
+      </div>
+
+      <!-- Tração -->
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <button id="tracao-4H"     class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300">4H</button>
+        <button id="tracao-4HLOCK" class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300">4H LOCK</button>
+        <button id="tracao-4LLOCK" class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300">4L LOCK</button>
+        <button id="tracao-N"      class="px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300">N</button>
+      </div>
+    </div>
+
+    <!-- Cenários: sempre exibidos -->
+    <div class="mt-6">
+      <h2 class="text-base font-semibold text-gray-800 mb-2">Cenários de uso</h2>
+      <div id="cenarios" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+        <div id="c-subida"  class="p-2 rounded-lg border bg-yellow-50 text-yellow-800 flex items-center justify-center">⛰️ Subida íngreme</div>
+        <div id="c-descida" class="p-2 rounded-lg border bg-blue-50   text-blue-800   flex items-center justify-center">🛞 Descida longa</div>
+        <div id="c-piso"    class="p-2 rounded-lg border bg-purple-50 text-purple-800 flex items-center justify-center">🌧️ Piso escorregadio</div>
+        <div id="c-normal"  class="p-2 rounded-lg border bg-green-50  text-green-800  flex items-center justify-center">🛣️ Condução normal</div>
+      </div>
+      <div id="descricao-cenario" class="mt-3 text-sm text-gray-700"></div>
+    </div>
+
+    <!-- Botão de ajuda por cenário (opcional) -->
+    <div class="mt-4">
+      <button id="btn-sugestoes" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm">❓ Qual cenário estou enfrentando?</button>
+      <div id="sugestoes" class="hidden mt-3">
+        <p class="text-sm text-gray-700">Selecione o cenário para aplicar uma recomendação automática:</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+          <button data-sugerir="subida"  class="bg-yellow-100 text-yellow-800 rounded-lg p-2">⛰️ Subida</button>
+          <button data-sugerir="descida" class="bg-blue-100   text-blue-800   rounded-lg p-2">🛞 Descida</button>
+          <button data-sugerir="chuva"   class="bg-purple-100 text-purple-800 rounded-lg p-2">🌧️ Chuva / Escorregadio</button>
+          <button data-sugerir="urbano"  class="bg-green-100  text-green-800  rounded-lg p-2">🛣️ Urbano</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado detalhado -->
+    <div id="resultado" class="mt-6 text-gray-800 text-sm leading-relaxed min-h-[220px]"></div>
+
+    <!-- Atenção geral fixa -->
+    <div class="mt-6">
+      <h2 class="text-lg font-semibold text-red-600">⚠️ Atenção</h2>
+      <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+        <li>Sempre reduza a velocidade e engate uma marcha inferior antes de descer uma ladeira longa ou subir uma subida inclinada.</li>
+        <li>Em pisos escorregadios, reduza a velocidade antes de reduzir a marcha.</li>
+        <li>Nunca engate a ré sem que o carro esteja totalmente parado.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Estado
+    let marcha = 'D';
+    let atpower = false;
+    let tracao = '4H';
+
+    // Dicas por marcha e A/T POWER (texto completo)
+    const dicas = {
+      D: {
+        off: [
+          'Modo de 4 marchas – uso geral.',
+          'Trocas automáticas entre 1ª e 4ª.',
+          'Condução normal em vias pavimentadas.'
+        ],
+        on: [
+          'Trocas mais tardias para maior força em arrancadas e subidas.',
+          'Permanece trocando entre as 4 marchas, porém em rotações mais altas.',
+          'Útil para ultrapassagens e aclives com carga.'
+        ]
+      },
+      '3': {
+        off: [
+          'Modo de 3 marchas – recomendado para regiões montanhosas e vento forte.',
+          'Troca automática entre 1ª, 2ª e 3ª.',
+          'Melhora o freio motor em descidas.'
+        ],
+        on: [
+          'Mantém trocas entre 1ª–3ª com rotações mais altas.',
+          'Mais potência disponível em subidas.',
+          'Boa opção para off‑road leve.'
+        ]
+      },
+      '2': {
+        off: [
+          'Trava em 2ª marcha – controle em baixa velocidade e descidas.',
+          'Não troca para 1ª nem para 3ª.',
+          'Reduz a chance de sobreaquecimento dos freios.'
+        ],
+        on: [
+          'Modo piso escorregadio: mantém 2ª para evitar patinagem.',
+          'Mesmo ao alternar para D/3, pode permanecer em 2ª até você acelerar mais forte.',
+          'Sem trocas para 1ª ou 3ª enquanto o A/T POWER estiver ativo.'
+        ]
+      },
+      L: {
+        off: [
+          'Trava em 1ª marcha – máximo freio motor.',
+          'Indicado para descidas muito íngremes e obstáculos.',
+          'Controle total do veículo em baixa velocidade.'
+        ],
+        on: [
+          'Mantém 1ª com rotação elevada para máximo torque.',
+          'Ajuda em subidas muito íngremes e trechos técnicos.',
+          'Marcha permanece travada.'
+        ]
+      }
+    };
+
+    const dicasTracao = {
+      '4H': [
+        'Tração integral com diferencial central livre (uso geral).',
+        'Adequado para asfalto seco ou chuva leve.'
+      ],
+      '4HLOCK': [
+        '4x4 com bloqueio do diferencial central.',
+        'Melhor para pisos de baixa aderência (terra, areia, lama leve).'
+      ],
+      '4LLOCK': [
+        'Reduzida com bloqueio do diferencial central.',
+        'Mais torque e controle: ideal para subidas/descidas fortes, pedras e resgate.',
+        'Mesmo no modo D, a transmissão usa no máximo até a 3ª marcha.'
+      ],
+      'N': [
+        'Neutro do sistema de tração – sem tração nas rodas.',
+        'Use apenas para rebocar ou mudar de modo. Não conduzir em N.'
+      ]
+    };
+
+    // Utilidades UI
+    const byId = (id) => document.getElementById(id);
+    const setActiveBtn = (prefix, key) => {
+      document.querySelectorAll(`[id^="${prefix}-"]`).forEach(b=>b.classList.remove('bg-blue-600','text-white'));
+      byId(`${prefix}-${key}`).classList.add('bg-blue-600','text-white');
+    };
+
+    // Regras de ativação visual dos cenários (sempre exibidos)
+    function atualizarCenarios() {
+      const ativos = {
+        subida:  (['D','3','L'].includes(marcha) && atpower) || marcha==='L',
+        descida: ['3','2','L'].includes(marcha),
+        piso:    (marcha==='2' && atpower) || ['4HLOCK','4LLOCK'].includes(tracao),
+        normal:  (marcha==='D' && !atpower && tracao==='4H')
+      };
+
+      // aplica estilo ativo/inativo
+      const apply = (id, on) => {
+        const el = byId(id);
+        el.classList.toggle('opacity-40', !on);
+        el.classList.toggle('ring-2', on);
+        el.classList.toggle('ring-emerald-500', on);
+      };
+
+      apply('c-subida',  ativos.subida);
+      apply('c-descida', ativos.descida);
+      apply('c-piso',    ativos.piso);
+      apply('c-normal',  ativos.normal);
+
+      // descrição resumida
+      const desc = [];
+      if (ativos.subida)  desc.push('⛰️ Use configurações que privilegiem torque (A/T POWER ligado, 3 ou L).');
+      if (ativos.descida) desc.push('🛞 Prefira 3, 2 ou L para aproveitar o freio motor e poupar os freios.');
+      if (ativos.piso)    desc.push('🌧️ Em piso escorregadio, 2 com A/T POWER e tração bloqueada melhora a tração.');
+      if (ativos.normal)  desc.push('🛣️ Condução cotidiana: D, A/T POWER desligado e 4H.');
+      byId('descricao-cenario').textContent = desc.join('\n');
+    }
+
+    function renderResultado() {
+      const powerKey = atpower ? 'on' : 'off';
+      const blocos = [];
+
+      // Cabeçalho do estado atual
+      blocos.push(`<p class='mb-2'>🔧 <strong>Selecionado:</strong> Marcha <strong>${marcha}</strong> · A/T POWER <strong>${atpower ? 'Ligado' : 'Desligado'}</strong> · Tração <strong>${tracao}</strong></p>`);
+
+      // Dicas por marcha/power
+      blocos.push(`<h3 class='font-semibold text-blue-700 mt-2'>Comportamento da transmissão</h3>`);
+      blocos.push(`<ul class='list-disc list-inside space-y-1'>${dicas[marcha][powerKey].map(li=>`<li>${li}</li>`).join('')}</ul>`);
+
+      // Dicas por tração
+      blocos.push(`<h3 class='font-semibold text-indigo-700 mt-3'>Modo de tração</h3>`);
+      blocos.push(`<ul class='list-disc list-inside space-y-1'>${dicasTracao[tracao].map(li=>`<li>${li}</li>`).join('')}</ul>`);
+
+      byId('resultado').innerHTML = blocos.join('');
+    }
+
+    // Handlers
+    function bind() {
+      ['D','3','2','L'].forEach(m => byId(`btn-${m}`).addEventListener('click', ()=>{ marcha=m; update(); }));
+      ['4H','4HLOCK','4LLOCK','N'].forEach(t => byId(`tracao-${t}`).addEventListener('click', ()=>{ tracao=t; update(); }));
+      byId('atpower-toggle').addEventListener('change', ()=>{ atpower = byId('atpower-toggle').checked; update(); });
+      byId('btn-sugestoes').addEventListener('click', ()=> byId('sugestoes').classList.toggle('hidden'));
+      document.querySelectorAll('[data-sugerir]').forEach(b=> b.addEventListener('click', (e)=>{
+        const c = e.currentTarget.getAttribute('data-sugerir');
+        if (c==='subida'){ marcha='3'; atpower=true; byId('atpower-toggle').checked=true; tracao='4HLOCK'; }
+        if (c==='descida'){ marcha='2'; atpower=false; byId('atpower-toggle').checked=false; tracao='4LLOCK'; }
+        if (c==='chuva'){  marcha='2'; atpower=true; byId('atpower-toggle').checked=true; tracao='4HLOCK'; }
+        if (c==='urbano'){ marcha='D'; atpower=false; byId('atpower-toggle').checked=false; tracao='4H'; }
+        byId('sugestoes').classList.add('hidden');
+        update();
+      }));
+    }
+
+    function update(){
+      setActiveBtn('btn', marcha);
+      setActiveBtn('tracao', tracao);
+      renderResultado();
+      atualizarCenarios();
+    }
+
+    // Init
+    bind();
+    update();
+  </script>
+</body>
+</html>
